@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="todoList">
+        <h1>Lista de Tareas</h1>
+        <div class="container">
+            <input type="text" class="input" id="taskInput" placeholder="Nueva tarea">
+            <button class="btn" onclick="addTask()">Agregar tarea</button>
+        </div>
+        <ul id="tasks"></ul>
+    </div>
+
+    <script>
+        var storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        var tasksList = document.querySelector('#tasks');
+
+        storedTasks.forEach((taskText) => {
+            addTaskToList(taskText);
+        });
+
+        function addTask() {
+            var taskInput = document.querySelector("#taskInput");
+            var taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                addTaskToList(taskText);
+
+                var updatedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                updatedTasks.push(taskText);
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+                taskInput.value = "";
+            }
+        }
+
+        function addTaskToList(taskText) {
+            var li = document.createElement("li");
+            li.innerHTML = `
+                        <p>${taskText}</p>
+                        <button onclick="removeTask(this)">Eliminar</button>
+                    `;
+            tasksList.appendChild(li);
+        }
+
+        function removeTask(button) {
+            var li = button.parentElement;
+            var taskText = li.querySelector('p').innerText;
+
+            li.remove();
+
+            var updatedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            updatedTasks = updatedTasks.filter(function (task) {
+                return task !== taskText;
+            });
+            localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        }
+    </script>
+
+</body>
+
+</html>
